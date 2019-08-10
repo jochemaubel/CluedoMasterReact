@@ -13,13 +13,12 @@ function Turn(props) {
   }
 
   let turnCards = [];
-  for (const card in turn.cards) {
-    turnCards = turnCards.concat(
-      <div key={card} className="col-sm">
-        <CardItem card={turn.cards[card]} cards={props.cards} image={card}/>
+  const categories = ["location","suspect","weapon"];
+  turnCards = categories.map((category) =>
+      <div key={category} className="col-sm">
+        <CardItem card={turn.cards[category]} cards={props.cards} image={category}/>
       </div>
-    )
-  }
+    );
 
   //TODO: check styling card on mobile
 

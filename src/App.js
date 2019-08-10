@@ -36,7 +36,7 @@ class Game extends React.Component {
           turnPlayer: "Daan", showPlayer: "Jochem", cardShowed: "Ballroom"
         },
         {
-          turnNumber: 2, cards: {location: "Dining Room", suspect: "White", weapon: "Revolver"},
+          turnNumber: 2, cards: {suspect: "White", location: "Dining Room", weapon: "Revolver"},
           turnPlayer: "Jochem", showPlayer: "Koen", cardShowed: "White"
         },
       ],

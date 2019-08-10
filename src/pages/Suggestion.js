@@ -6,6 +6,24 @@ import NextButton from "../components/NextButton";
 import CardItem from "../components/CardItem";
 import {UncontrolledAlert} from 'reactstrap'
 
+function setShowPlayers(turnPlayer, players) {
+  const index = players.indexOf(turnPlayer);
+  const length = players.length;
+  let showPlayers = [];
+  if (index < length - 1) {
+    for (let i = index + 1; i < length; i++) {
+      showPlayers = showPlayers.concat(players[i])
+    }
+  }
+  if (index > 0) {
+    for (let i = 0; i < index; i++) {
+      showPlayers = showPlayers.concat(players[i])
+    }
+  }
+  showPlayers = showPlayers.concat("Nobody");
+  console.log(showPlayers);
+  return showPlayers;
+}
 
 class Suggestion extends React.Component {
 
@@ -41,7 +59,7 @@ class Suggestion extends React.Component {
     const myName = this.props.players[0];
     if (turn.showPlayer) {
       this.setState({showAlertPlayer: false});
-      if (turn.cardShowed || (turn.turnPlayer !== myName && turn.showPlayer !== myName)) {
+      if (turn.cardShowed || (turn.turnPlayer !== myName && turn.showPlayer !== myName) || turn.showPlayer === "Nobody") {
         this.setState({showAlertCard: false});
         this.props.onSubmit(this.state.turn);
       } else {
@@ -61,6 +79,11 @@ class Suggestion extends React.Component {
     } else {
       turn[key] = value;
     }
+    if (key === "showPlayer" && value === "Nobody") {
+      if ("cardShowed" in turn) {
+        delete turn.cardShowed
+      }
+    }
     this.setState({turn: turn});
   }
 
@@ -71,6 +94,7 @@ class Suggestion extends React.Component {
     const WEAPONS = ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'];
 
     const players = this.props.players;
+    console.log(players.length);
     const myName = players[0];
     const turnPlayerList = players.map((player, index) => {
       return player === this.state.turn.turnPlayer ?
@@ -79,13 +103,10 @@ class Suggestion extends React.Component {
     });
 
     let showPlayerList;
-    let showPlayers = [...this.props.players];
+    let showPlayers;
     if (this.state.turn.turnPlayer) {
       const turnPlayer = this.state.turn.turnPlayer;
-      if (showPlayers.includes(turnPlayer)) {
-        showPlayers.splice(showPlayers.indexOf(turnPlayer), 1);
-      }
-      showPlayers = showPlayers.concat("Nobody");
+      showPlayers = setShowPlayers(turnPlayer, players);
       showPlayerList = showPlayers.map((player, index) => {
         return player === this.state.turn.showPlayer ?
           <PlayerItem key={index} player={player} onClick={() => this.onClick(player, "showPlayer")} selected/> :
@@ -117,17 +138,25 @@ class Suggestion extends React.Component {
     );
 
     let turnCards = [];
+    const categories = ["location","suspect","weapon"];
     const cards = this.state.turn.cards;
 
-    for (const cardType in cards) {
-      turnCards = turnCards.concat(
-        this.state.turn.cardShowed && this.state.turn.cardShowed === cards[cardType] ?
-          <CardItem key={cardType} card={cards[cardType]} cards={this.props.cards} image={cardType}
+    turnCards = categories.map((category) =>
+        this.state.turn.cardShowed && this.state.turn.cardShowed === cards[category] ?
+          <CardItem key={category} card={cards[category]} cards={this.props.cards} image={category}
                     selected
-                    onClick={() => this.onClick(cards[cardType], "cardShowed")}/> :
-          <CardItem key={cardType} card={cards[cardType]} cards={this.props.cards} image={cardType}
-                    onClick={() => this.onClick(cards[cardType], "cardShowed")}/>
+                    onClick={() => this.onClick(cards[category], "cardShowed")}/> :
+          <CardItem key={category} card={cards[category]} cards={this.props.cards} image={category}
+                    onClick={() => this.onClick(cards[category], "cardShowed")}/>
       );
+
+    let showCardsBool = false;
+    if (this.state.turn.showPlayer && this.state.turn.showPlayer === myName) {
+      showCardsBool = true
+    }
+    if (this.state.turn.turnPlayer && this.state.turn.turnPlayer === myName
+      && this.state.turn.showPlayer && this.state.turn.showPlayer !== "Nobody") {
+      showCardsBool = true
     }
 
     const showCards = (
@@ -148,7 +177,7 @@ class Suggestion extends React.Component {
             <h3>Player who showed</h3>
             {showPlayerList}
           </div>
-          {(this.state.turn.turnPlayer === myName || this.state.turn.showPlayer === myName) && showCards}
+          {showCardsBool && showCards}
         </div>
         <NextButton onClick={this.submitTurn}>Submit turn</NextButton>
       </Fragment>
