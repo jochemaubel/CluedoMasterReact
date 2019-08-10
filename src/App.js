@@ -27,7 +27,7 @@ class Game extends React.Component {
       cardsInMyHand: [],
       cards: {
         cardsInHand: {"Ballroom": "Jochem"},
-        cardsNotInHand: {"Dining Room": ["Koen", "Daan"]},
+        cardsNotInHand: {"Dining Room": ["Koen", "Daan"], "Green": ["Koen"], "Knife": ["Koen"]},
         solution: ["Conservatory"],
       },
       turns: [

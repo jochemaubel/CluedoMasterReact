@@ -21,7 +21,6 @@ function setShowPlayers(turnPlayer, players) {
     }
   }
   showPlayers = showPlayers.concat("Nobody");
-  console.log(showPlayers);
   return showPlayers;
 }
 
@@ -94,7 +93,6 @@ class Suggestion extends React.Component {
     const WEAPONS = ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'];
 
     const players = this.props.players;
-    console.log(players.length);
     const myName = players[0];
     const turnPlayerList = players.map((player, index) => {
       return player === this.state.turn.turnPlayer ?
@@ -109,8 +107,10 @@ class Suggestion extends React.Component {
       showPlayers = setShowPlayers(turnPlayer, players);
       showPlayerList = showPlayers.map((player, index) => {
         return player === this.state.turn.showPlayer ?
-          <PlayerItem key={index} player={player} onClick={() => this.onClick(player, "showPlayer")} selected/> :
-          <PlayerItem key={index} player={player} onClick={() => this.onClick(player, "showPlayer")}/>
+          <PlayerItem key={index} player={player} cards={this.props.cards} turnCards={this.state.turn.cards}
+                      onClick={() => this.onClick(player, "showPlayer")} selected/> :
+          <PlayerItem key={index} player={player} cards={this.props.cards} turnCards={this.state.turn.cards}
+                      onClick={() => this.onClick(player, "showPlayer")}/>
       });
     }
 

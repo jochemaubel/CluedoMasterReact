@@ -1,25 +1,17 @@
 import React from 'react';
 import '../bootstrap.min.css';
-
-function Badge(props) {
-  const className = "badge badge-pill mx-1 " + props.color;
-  return <span className={className} >{props.badgeText}</span>
-}
-
-function CardIcon(props) {
-  if(props.cardType) {
-    return <img src={require("../images/" + props.cardType + ".png")} alt="" className="resize mr-2" />
-  }
-  return null;
-}
+import Badge from "./Badge";
+import CardIcon from "./CardIcon";
 
 function CardItem(props) {
 
+  //TODO: for loop should be map()
+
   let className = "d-flex flex-row list-group-item list-group-item-action justify-content-end align-items-center";
   if (props.selected) {className = className + " active"};
+
   const card = props.card;
   let badge = null;
-
   if (props.cards) {
     if (props.cards.solution && props.cards.solution.includes(card)) {
       className = className + " list-group-item-success";
