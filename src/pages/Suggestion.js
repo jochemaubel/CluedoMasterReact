@@ -36,6 +36,7 @@ class Suggestion extends React.Component {
       turn: {cards: {},},
     };
     this.doSuggestion = this.doSuggestion.bind(this);
+    this.backToSuggestion = this.backToSuggestion.bind(this);
     this.submitTurn = this.submitTurn.bind(this);
     this.onClick = this.onClick.bind(this);
   }
@@ -52,6 +53,18 @@ class Suggestion extends React.Component {
     }
     window.scrollTo(0, 0);
   }
+
+  backToSuggestion() {
+    let turn = this.state.turn;
+    if (turn.showPlayer) {
+      delete turn.showPlayer
+    }
+    if (turn.cardShowed) {
+      delete turn.cardShowed
+    }
+    this.setState({suggest: true})
+  }
+
 
   submitTurn() {
     const turn = this.state.turn;
@@ -137,19 +150,6 @@ class Suggestion extends React.Component {
       </Fragment>
     );
 
-    let turnCards = [];
-    const categories = ["location","suspect","weapon"];
-    const cards = this.state.turn.cards;
-
-    turnCards = categories.map((category) =>
-        this.state.turn.cardShowed && this.state.turn.cardShowed === cards[category] ?
-          <CardItem key={category} card={cards[category]} cards={this.props.cards} image={category}
-                    selected
-                    onClick={() => this.onClick(cards[category], "cardShowed")}/> :
-          <CardItem key={category} card={cards[category]} cards={this.props.cards} image={category}
-                    onClick={() => this.onClick(cards[category], "cardShowed")}/>
-      );
-
     let showCardsBool = false;
     if (this.state.turn.showPlayer && this.state.turn.showPlayer === myName) {
       showCardsBool = true
@@ -159,6 +159,35 @@ class Suggestion extends React.Component {
       showCardsBool = true
     }
 
+    let turnCards = [];
+    const showPlayer = this.state.turn.showPlayer;
+    if (showCardsBool) {
+      const cardsNotInHand = this.props.cards.cardsNotInHand;
+      const cards = this.state.turn.cards;
+
+      let categories = ["location", "suspect", "weapon"];
+      for (const category in cards) {
+        if (cardsNotInHand[cards[category]]
+          && cardsNotInHand[cards[category]].includes(showPlayer)) {
+          const index = categories.indexOf(category);
+          categories.splice(index, 1);
+        }
+      }
+      if (categories.length === 0) {
+        turnCards = <UncontrolledAlert color="warning">{showPlayer} has no cards to show</UncontrolledAlert>
+      } else {
+        turnCards = categories.map((category) =>
+          this.state.turn.cardShowed && this.state.turn.cardShowed === cards[category] ?
+            <CardItem key={category} card={cards[category]} image={category}
+                      selected
+                      onClick={() => this.onClick(cards[category], "cardShowed")}/> :
+            <CardItem key={category} card={cards[category]} image={category}
+                      onClick={() => this.onClick(cards[category], "cardShowed")}/>
+        );
+
+      }
+    }
+    
     const showCards = (
       <div className=" col-sm mb-3">
         <h3>Card shown</h3>
@@ -166,24 +195,29 @@ class Suggestion extends React.Component {
       </div>
     );
 
-    const show = (
-      <Fragment>
-        {this.state.showAlertPlayer &&
-        <UncontrolledAlert color="warning">First select a player.</UncontrolledAlert>}
-        {this.state.showAlertCard &&
-        <UncontrolledAlert color="warning">First select a card.</UncontrolledAlert>}
-        <div id="show" className=" row">
-          <div className=" col-sm mb-3">
-            <h3>Player who showed</h3>
-            {showPlayerList}
+    const
+      show = (
+        <Fragment>
+          {this.state.showAlertPlayer &&
+          <UncontrolledAlert color="warning">First select a player.</UncontrolledAlert>}
+          {this.state.showAlertCard &&
+          <UncontrolledAlert color="warning">First select a card.</UncontrolledAlert>}
+          <div id="show" className=" row">
+            <div className=" col-sm mb-3">
+              <h3>Player who showed</h3>
+              {showPlayerList}
+            </div>
+            {showCardsBool && showCards}
           </div>
-          {showCardsBool && showCards}
-        </div>
-        <NextButton onClick={this.submitTurn}>Submit turn</NextButton>
-      </Fragment>
-    );
+          <div className="row d-flex justify-content-between mx-2 mb-3">
+            <button className="btn btn-secondary btn-fixed-width" onClick={this.backToSuggestion}>Back</button>
+            <button className="btn btn-primary btn-fixed-width" onClick={this.submitTurn}>Submit turn</button>
+          </div>
+        </Fragment>
+      );
 
     return (
+
       <Fragment>
         <div className="container mt-3">
           {this.state.suggest ? suggest : show}

@@ -31,11 +31,8 @@ function SelectCards(props) {
       </div>
 
       <div className="row d-flex justify-content-between mx-2 mb-3">
-        <input type="hidden" id="startGame" name="cards_in_hand" value=""/>
-          <button className="btn btn-secondary btn-fixed-width">Back to players</button>
-          <button className="btn btn-primary btn-fixed-width">
-            Start game
-          </button>
+        <button className="btn btn-secondary btn-fixed-width">Back to players</button>
+        <button className="btn btn-primary btn-fixed-width">Start game</button>
       </div>
     </div>
   )

@@ -8,18 +8,18 @@ function CardItem(props) {
   //TODO: for loop should be map()
 
   let className = "d-flex flex-row list-group-item list-group-item-action justify-content-end align-items-center";
-  if (props.selected) {className = className + " active"};
+  if (props.selected) {className = className + " active"}
 
   const card = props.card;
   let badge = null;
   if (props.cards) {
-    if (props.cards.solution && props.cards.solution.includes(card)) {
+    if (props.cards.solution.includes(card)) {
       className = className + " list-group-item-success";
       badge = <Badge badgeText="Solution" color="badge-primary"/>
-    } else if (props.cards.cardsInHand && card in props.cards.cardsInHand) {
+    } else if (card in props.cards.cardsInHand) {
       className = className + " list-group-item-danger";
       badge = <Badge badgeText={props.cards.cardsInHand[card]} color="badge-primary"/>
-    } else if (props.cards.cardsNotInHand && card in props.cards.cardsNotInHand) {
+    } else if (card in props.cards.cardsNotInHand) {
       badge=[];
       for (const player of props.cards.cardsNotInHand[card]) {
         badge=badge.concat(<Badge key={player} badgeText={player} color="badge-danger"/>)

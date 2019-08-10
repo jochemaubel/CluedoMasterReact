@@ -11,7 +11,7 @@ function SelectCardList(props) {
   let list = [];
   for (const card of cardList) {
     let status = 'Inactive';
-    if (props.hand.includes(card)) {
+    if (card in props.hand) {
       status = 'Active'
     }
     list = list.concat(
@@ -34,7 +34,7 @@ class SelectCardItem extends React.Component {
   //TODO: check if key can be removed here
 
   render() {
-    let className = "d-flex flex-row list-group-item list-group-item-action justify-content-end align-items-center"
+    let className = "d-flex flex-row list-group-item list-group-item-action justify-content-end align-items-center";
     if (this.props.status === 'Active') {
       className = className + " active"
     }

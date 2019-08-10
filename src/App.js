@@ -6,8 +6,8 @@ import SelectCards from './pages/SelectCards';
 import Cards from './pages/Cards';
 import Turns from "./pages/Turns";
 import Suggestion from "./pages/Suggestion";
+import calculateHand from "./services/calculateHand";
 
-//TODO: Suggestion
 //TODO: Intelligence
 //TODO: Functions for states
 //TODO: Navigation
@@ -24,10 +24,13 @@ class Game extends React.Component {
     this.state = {
       game: "suggestion",
       players: ["Jochem", "Koen", "Daan"],
-      cardsInMyHand: [],
       cards: {
         cardsInHand: {"Ballroom": "Jochem"},
-        cardsNotInHand: {"Dining Room": ["Koen", "Daan"], "Green": ["Koen"], "Knife": ["Koen"]},
+        cardsNotInHand: {
+          "Ballroom": ["Koen","Daan"],
+          "Dining Room": ["Koen", "Daan"],
+          "Conservatory": ["Jochem","Koen","Daan"],
+          "Green": ["Koen"], "Knife": ["Koen"]},
         solution: ["Conservatory"],
       },
       turns: [
@@ -59,15 +62,15 @@ class Game extends React.Component {
   };
 
   updateHand(card) {
-    let hand = this.state.cardsInMyHand;
-    let index = hand.indexOf(card);
-    if (index > -1) {
-      hand.splice(index, 1)
+    const myName = this.state.players[0];
+    let hand = this.state.cards.cardsInHand;
+    if (card in hand) {
+      delete hand[card]
     } else {
-      hand = hand.concat(card);
+      hand[card] = myName;
     }
     console.log(hand);
-    this.setState({cardsInMyHand: hand});
+    this.setState({cardsInHand: hand});
   }
 
   addTurn(turn) {
@@ -78,6 +81,7 @@ class Game extends React.Component {
       turns: turns,
       game: "turns",
     });
+    calculateHand(turns, this.state.cards);
   }
 
   render() {
@@ -87,7 +91,7 @@ class Game extends React.Component {
         {this.state.game === "setPlayers" &&
         <SetPlayers onChange={this.handleChange.bind(this)}/>}
         {this.state.game === "selectCards" &&
-        <SelectCards hand={this.state.cardsInMyHand} onSelectCard={(card) => this.updateHand(card)}/>}
+        <SelectCards hand={this.state.cards.cardsInHand} onSelectCard={(card) => this.updateHand(card)}/>}
         {this.state.game === "cards" &&
         <Cards cards={this.state.cards}/>}
         {this.state.game === "turns" &&
