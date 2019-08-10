@@ -5,8 +5,6 @@ import CardIcon from "./CardIcon";
 
 function CardItem(props) {
 
-  //TODO: for loop should be map()
-
   let className = "d-flex flex-row list-group-item list-group-item-action justify-content-end align-items-center";
   if (props.selected) {className = className + " active"}
 
@@ -21,9 +19,10 @@ function CardItem(props) {
       badge = <Badge badgeText={props.cards.cardsInHand[card]} color="badge-primary"/>
     } else if (card in props.cards.cardsNotInHand) {
       badge=[];
-      for (const player of props.cards.cardsNotInHand[card]) {
-        badge=badge.concat(<Badge key={player} badgeText={player} color="badge-danger"/>)
+      badge = props.cards.cardsNotInHand[card].map((player) => {
+          return player !== props.cards.myName && <Badge key={player} badgeText={player} color="badge-danger"/>
       }
+      )
     }
   }
 

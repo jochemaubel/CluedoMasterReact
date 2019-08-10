@@ -11,7 +11,6 @@ import calculateHand from "./services/calculateHand";
 //TODO: Intelligence
 //TODO: Functions for states
 //TODO: Navigation
-//TODO: Refactor Data Model
 //TODO: Accusation
 //TODO: Alerts
 
@@ -25,12 +24,18 @@ class Game extends React.Component {
       game: "suggestion",
       players: ["Jochem", "Koen", "Daan"],
       cards: {
-        cardsInHand: {"Ballroom": "Jochem"},
+        myName: "Jochem",
+        cardsInHand: {"Ballroom": "Jochem", "White": "Koen"},
         cardsNotInHand: {
-          "Ballroom": ["Koen","Daan"],
+          "Ballroom": ["Koen", "Daan"],
           "Dining Room": ["Koen", "Daan"],
-          "Conservatory": ["Jochem","Koen","Daan"],
-          "Green": ["Koen"], "Knife": ["Koen"]},
+          "Conservatory": ["Jochem", "Koen", "Daan"],
+          "Green": ["Koen"],
+          "Knife": ["Koen"],
+          "White": ["Jochem", "Daan"],
+          "Peacock": ["Jochem"],
+          "Candlestick": ["Jochem"],
+        },
         solution: ["Conservatory"],
       },
       turns: [
@@ -43,10 +48,12 @@ class Game extends React.Component {
           turnPlayer: "Jochem", showPlayer: "Koen", cardShowed: "White"
         },
       ],
-      suggestion: [],
-    };
+    }
+    ;
   }
 
+  // setPlayers
+  //TODO: setPlayers after button click and change state
   handleChange(name, value) {
     let players = this.state.players;
     const length = parseInt(name) + 1 - players.length;
@@ -61,6 +68,8 @@ class Game extends React.Component {
     console.log(players);
   };
 
+  // selectCards
+  //TODO: selectCards after button click and change state
   updateHand(card) {
     const myName = this.state.players[0];
     let hand = this.state.cards.cardsInHand;
@@ -77,11 +86,13 @@ class Game extends React.Component {
     let turns = this.state.turns;
     turn.turnNumber = turns.length + 1;
     turns = turns.concat(turn);
+    const cards = calculateHand(turns, this.state.cards, this.state.players);
     this.setState({
       turns: turns,
+      cards: cards,
       game: "turns",
     });
-    calculateHand(turns, this.state.cards);
+
   }
 
   render() {
@@ -97,7 +108,7 @@ class Game extends React.Component {
         {this.state.game === "turns" &&
         <Turns cards={this.state.cards} turns={this.state.turns}/>}
         {this.state.game === "suggestion"
-        && <Suggestion cards={this.state.cards} players={this.state.players} onSubmit={(turn) => this.addTurn(turn)} />}
+        && <Suggestion cards={this.state.cards} players={this.state.players} onSubmit={(turn) => this.addTurn(turn)}/>}
       </Fragment>
     );
   }
