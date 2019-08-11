@@ -2,7 +2,6 @@ import React, {Fragment} from 'react';
 import '../bootstrap.min.css';
 import CardList from "../components/CardList";
 import PlayerItem from "../components/PlayerItem";
-import NextButton from "../components/NextButton";
 import CardItem from "../components/CardItem";
 import {UncontrolledAlert} from 'reactstrap'
 
@@ -146,7 +145,10 @@ class Suggestion extends React.Component {
                     selected={this.state.turn.cards.weapon}
                     onClick={(card) => this.onClick(card, "weapon")}/>
         </div>
-        <NextButton onClick={this.doSuggestion}>Do suggestion</NextButton>
+        <div className="row d-flex justify-content-between mx-2 mb-3">
+          <button className="btn btn-secondary btn-fixed-width" onClick={this.props.onBack}>Back</button>
+          <button className="btn btn-primary btn-fixed-width" onClick={this.doSuggestion}>Do suggestion</button>
+        </div>
       </Fragment>
     );
 
@@ -162,7 +164,7 @@ class Suggestion extends React.Component {
     let turnCards = [];
     const showPlayer = this.state.turn.showPlayer;
     if (showCardsBool) {
-      const cardsNotInHand = this.props.cards.cardsNotInHand;
+      const cardsNotInHand = this.props.cards.notInHand;
       const cards = this.state.turn.cards;
 
       let categories = ["location", "suspect", "weapon"];
@@ -187,7 +189,7 @@ class Suggestion extends React.Component {
 
       }
     }
-    
+
     const showCards = (
       <div className=" col-sm mb-3">
         <h3>Card shown</h3>

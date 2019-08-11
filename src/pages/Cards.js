@@ -10,7 +10,6 @@ function Cards(props) {
   const SUSPECTS = ['Green', 'Mustard', 'Peacock', 'Plum', 'Scarlett', 'White'];
   const WEAPONS = ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'];
 
-  //TODO: alert for found cards
   //TODO: define const LOCATIONS etc. just once
 
   return (

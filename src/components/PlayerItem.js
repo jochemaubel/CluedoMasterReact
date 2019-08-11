@@ -18,11 +18,11 @@ function PlayerItem(props) {
       const turnCards = props.turnCards;
       for (const category in turnCards) {
         const card = turnCards[category];
-        if (card in props.cards.cardsInHand
-          && props.cards.cardsInHand[card] === player) {
+        if (card in props.cards.inHand
+          && props.cards.inHand[card] === player) {
           badge = badge.concat(<Badge badgeText={card} color="badge-primary"/>)
-        } else if (card in props.cards.cardsNotInHand
-          && props.cards.cardsNotInHand[card].includes(player)) {
+        } else if (card in props.cards.notInHand
+          && props.cards.notInHand[card].includes(player)) {
           badge = badge.concat(<Badge key={card} badgeText={card} color="badge-danger"/>);
           doesNotHaveCard++;
         }

@@ -5,6 +5,8 @@ import CardIcon from "./CardIcon";
 
 function CardItem(props) {
 
+  //TODO: add extra info to cardItem (hasSeen, showedTo)
+
   let className = "d-flex flex-row list-group-item list-group-item-action justify-content-end align-items-center";
   if (props.selected) {className = className + " active"}
 
@@ -14,12 +16,12 @@ function CardItem(props) {
     if (props.cards.solution.includes(card)) {
       className = className + " list-group-item-success";
       badge = <Badge badgeText="Solution" color="badge-primary"/>
-    } else if (card in props.cards.cardsInHand) {
+    } else if (card in props.cards.inHand) {
       className = className + " list-group-item-danger";
-      badge = <Badge badgeText={props.cards.cardsInHand[card]} color="badge-primary"/>
-    } else if (card in props.cards.cardsNotInHand) {
+      badge = <Badge badgeText={props.cards.inHand[card]} color="badge-primary"/>
+    } else if (card in props.cards.notInHand) {
       badge=[];
-      badge = props.cards.cardsNotInHand[card].map((player) => {
+      badge = props.cards.notInHand[card].map((player) => {
           return player !== props.cards.myName && <Badge key={player} badgeText={player} color="badge-danger"/>
       }
       )

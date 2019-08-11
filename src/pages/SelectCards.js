@@ -10,6 +10,7 @@ function SelectCards(props) {
   const SUSPECTS = ['Green', 'Mustard', 'Peacock', 'Plum', 'Scarlett', 'White'];
   const WEAPONS = ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'];
 
+  //TODO: use cards.LOCATIONS etc. to get rid of constants.
   //TODO: AddTurn pattern for SelectCards?
 
   return (
