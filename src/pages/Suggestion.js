@@ -176,7 +176,7 @@ class Suggestion extends React.Component {
         }
       }
       if (categories.length === 0) {
-        turnCards = <UncontrolledAlert color="warning">{showPlayer} has no cards to show</UncontrolledAlert>
+        turnCards = <UncontrolledAlert color="danger">{showPlayer} has no cards to show.</UncontrolledAlert>
       } else {
         turnCards = categories.map((category) =>
           this.state.turn.cardShowed && this.state.turn.cardShowed === cards[category] ?

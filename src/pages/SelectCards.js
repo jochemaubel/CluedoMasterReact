@@ -3,40 +3,70 @@ import '../bootstrap.min.css';
 import {UncontrolledAlert} from 'reactstrap'
 import SelectCardList from "../components/SelectCardList";
 
-function SelectCards(props) {
+class SelectCards extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onSelectCard = this.onSelectCard.bind(this);
+    this.onClick = this.onClick.bind(this);
+    this.state = {
+      inHand: [],
+      alertSelectCards: false
+    }
+  }
 
-  const LOCATIONS = ['Ballroom', 'Billiard Room', 'Conservatory', 'Dining Room', 'Hall', 'Kitchen', 'Library', 'Lounge',
-    'Study'];
-  const SUSPECTS = ['Green', 'Mustard', 'Peacock', 'Plum', 'Scarlett', 'White'];
-  const WEAPONS = ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'];
+  onSelectCard(card) {
+    let inHand = this.state.inHand;
+    if (inHand.includes(card)) {
+      inHand.splice(inHand.indexOf(card),1)
+    } else {
+      inHand.push(card)
+    }
+    console.log(inHand);
+    this.setState({inHand: inHand});
+  }
 
-  //TODO: use cards.LOCATIONS etc. to get rid of constants.
-  //TODO: AddTurn pattern for SelectCards?
+  onClick() {
+    if(this.state.inHand.length < 3) {
+      this.setState({alertSelectCards: true});
+      window.scrollTo(0,0)
+    } else {
+      this.props.onSubmit(this.state.inHand)
+    }
+  }
 
-  return (
-    <div className="container mt-3">
-      <UncontrolledAlert color="info">Select the cards you have in your hand.</UncontrolledAlert>
-      <div className="row">
-        <SelectCardList title="Locations"
-                        cardList={LOCATIONS}
-                        hand={props.hand}
-                        onClick={(card) => props.onSelectCard(card)}/>
-        <SelectCardList title="Suspects"
-                        cardList={SUSPECTS}
-                        hand={props.hand}
-                        onClick={(card) => props.onSelectCard(card)}/>
-        <SelectCardList title="Weapon"
-                        cardList={WEAPONS}
-                        hand={props.hand}
-                        onClick={(card) => props.onSelectCard(card)}/>
+  render() {
+    const cards = this.props.cards;
+
+    return (
+      <div className="container mt-3">
+        <UncontrolledAlert color="info">Select the cards you have in your hand.</UncontrolledAlert>
+        {this.state.alertSelectCards &&
+        <UncontrolledAlert color="warning">
+          First enter at least three cards.
+        </UncontrolledAlert>
+        }
+        <div className="row">
+          <SelectCardList title="Locations"
+                          cardList={cards.location}
+                          hand={this.state.inHand}
+                          onClick={(card) => this.onSelectCard(card)}/>
+          <SelectCardList title="Suspects"
+                          cardList={cards.suspect}
+                          hand={this.state.inHand}
+                          onClick={(card) => this.onSelectCard(card)}/>
+          <SelectCardList title="Weapon"
+                          cardList={cards.weapon}
+                          hand={this.state.inHand}
+                          onClick={(card) => this.onSelectCard(card)}/>
+        </div>
+
+        <div className="row d-flex justify-content-between mx-2 mb-3">
+          <button className="btn btn-secondary btn-fixed-width">Back to players</button>
+          <button className="btn btn-primary btn-fixed-width" onClick={this.onClick}>Start game</button>
+        </div>
       </div>
-
-      <div className="row d-flex justify-content-between mx-2 mb-3">
-        <button className="btn btn-secondary btn-fixed-width">Back to players</button>
-        <button className="btn btn-primary btn-fixed-width">Start game</button>
-      </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default SelectCards

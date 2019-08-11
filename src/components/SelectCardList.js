@@ -11,7 +11,7 @@ function SelectCardList(props) {
   let list = [];
   for (const card of cardList) {
     let status = 'Inactive';
-    if (card in props.hand) {
+    if (props.hand.includes(card)) {
       status = 'Active'
     }
     list = list.concat(

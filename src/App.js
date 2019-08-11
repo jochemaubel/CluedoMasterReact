@@ -8,8 +8,7 @@ import Turns from "./pages/Turns";
 import Suggestion from "./pages/Suggestion";
 import Solution from "./pages/Solution";
 
-//TODO: Intelligence
-//TODO: Alerts
+
 //TODO: Functions for states
 //TODO: Navigation
 //TODO: Accusation
@@ -21,76 +20,51 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    this.updateHand = this.updateHand.bind(this);
+    this.setPlayers = this.setPlayers.bind(this);
+    this.selectCards = this.selectCards.bind(this);
     this.addTurn = this.addTurn.bind(this);
-    this.showTurns = this.showTurns.bind(this);
     this.state = {
-      game: "suggestion",
-      players: ["Jochem", "Koen", "Daan"],
+      game: "setPlayers",
+      players: [],
       cards: {
-        myName: "Jochem",
-        inHand: {"Ballroom": "Jochem", "White": "Koen"},
-        notInHand: {
-          "Ballroom": ["Koen", "Daan"],
-          "Dining Room": ["Koen", "Daan"],
-          "Conservatory": ["Jochem", "Koen", "Daan"],
-          "Green": ["Koen", "Jochem"],
-          "Knife": ["Koen", "Jochem"],
-          "White": ["Jochem", "Daan"],
-          "Peacock": ["Jochem"],
-          "Candlestick": ["Jochem"],
-        },
-        solution: ["Conservatory"],
+        myName: null,
+        inHand: {},
+        notInHand: {},
+        solution: [],
+        // Constants
         categories: ["location", "suspect", "weapon"],
         location: ['Ballroom', 'Billiard Room', 'Conservatory', 'Dining Room', 'Hall', 'Kitchen', 'Library', 'Lounge',
           'Study'],
         suspect: ['Green', 'Mustard', 'Peacock', 'Plum', 'Scarlett', 'White'],
         weapon: ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'],
       },
-      turns: [
-        {
-          turnNumber: 1, cards: {location: "Ballroom", suspect: "Green", weapon: "Knife"},
-          turnPlayer: "Daan", showPlayer: "Jochem", cardShowed: "Ballroom"
-        },
-        {
-          turnNumber: 2, cards: {suspect: "White", location: "Dining Room", weapon: "Revolver"},
-          turnPlayer: "Jochem", showPlayer: "Koen", cardShowed: "White"
-        },
-      ],
+      turns: [],
       foundCards: {},
     }
     ;
   }
 
-  // setPlayers
-  //TODO: setPlayers after button click and change state
-  handleChange(name, value) {
-    let players = this.state.players;
-    const length = parseInt(name) + 1 - players.length;
-    if (length > 0) {
-      players = players.concat(Array(length).fill(null))
-    }
-    players[name] = value;
+  setPlayers(players) {
+    let cards = this.state.cards;
+    cards.myName = players[0];
+    this.setState({players: players, cards: cards, game: "selectCards"});
+  }
 
-    this.setState({
-      players: players
-    });
-    console.log(players);
-  };
-
-  // selectCards
-  //TODO: selectCards after button click and change state
-  //TODO: also fill cardsNotInHand for player[0]
-  updateHand(card) {
-    const myName = this.state.players[0];
-    let inHand = this.state.cards.inHand;
-    if (card in inHand) {
-      delete inHand[card]
-    } else {
-      inHand[card] = myName;
+  selectCards(cardsInHand) {
+    let cards= this.state.cards;
+    for (const card of cardsInHand) {
+      cards.inHand[card] = cards.myName;
     }
-    console.log(inHand);
-    this.setState({inHand: inHand});
+    for(const category of cards.categories) {
+      for(const card of cards[category]) {
+        if(!(card in cards.inHand)) {
+          cards.notInHand[card] = [cards.myName]
+        }
+      }
+    }
+    console.log(cards.inHand);
+    console.log(cards.notInHand);
+    this.setState({cards:cards, game: "turns"})
   }
 
   addTurn(turn) {
@@ -102,20 +76,17 @@ class Game extends React.Component {
     });
     const foundSolution = this.updateCards(turn);
     console.log(foundSolution);
-    if(foundSolution) {
+    if (foundSolution) {
       this.setState({game: "solution"})
     } else {
       this.setState({game: "turns"})
     }
   }
 
-  showTurns() {
-    this.setState({game: "turns"})
-  }
-
   updateCards(turn) {
     const turns = this.state.turns;
     const cards = this.state.cards;
+    this.setState({foundCards: {}});
 
     // Add showed card to cards_in_hand
     if (turn.cardShowed) {
@@ -194,7 +165,6 @@ class Game extends React.Component {
 
   checkAllTurns(turns) {
     let addedCard = true;
-    let foundCards = this.state.foundCards;
     while (addedCard) {
       addedCard = false;
       for (const turn in turns) {
@@ -274,19 +244,25 @@ class Game extends React.Component {
       <Fragment>
         <NavBar/>
         {this.state.game === "setPlayers" &&
-        <SetPlayers onChange={this.handleChange.bind(this)}/>}
+        <SetPlayers onSubmit={(players) => this.setPlayers(players)}/>}
         {this.state.game === "selectCards" &&
-        <SelectCards hand={this.state.cards.inHand} onSelectCard={(card) => this.updateHand(card)}/>}
+        <SelectCards cards={this.state.cards}
+                     onBack={() => this.setState({game: "setPlayers"})}
+                     onSubmit={(cardsInHand) => this.selectCards(cardsInHand)}/>}
         {this.state.game === "cards" &&
         <Cards cards={this.state.cards}/>}
         {this.state.game === "turns" &&
-        <Turns cards={this.state.cards} turns={this.state.turns}/>}
+        <Turns cards={this.state.cards}
+               turns={this.state.turns}
+               foundCards={this.state.foundCards}
+               newTurn={() => this.setState({game: "suggestion"})}/>}
         {this.state.game === "suggestion" &&
-        <Suggestion cards={this.state.cards} players={this.state.players}
-                       onBack={this.showTurns}
-                       onSubmit={(turn) => this.addTurn(turn)}/>}
+        <Suggestion cards={this.state.cards}
+                    players={this.state.players}
+                    onBack={() => this.setState({game: "turns"})}
+                    onSubmit={(turn) => this.addTurn(turn)}/>}
         {this.state.game === "solution" &&
-        <Solution cards={this.state.cards} />}
+        <Solution cards={this.state.cards}/>}
       </Fragment>
     );
   }
