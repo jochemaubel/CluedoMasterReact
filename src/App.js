@@ -23,7 +23,7 @@ class Game extends React.Component {
     this.setPlayers = this.setPlayers.bind(this);
     this.selectCards = this.selectCards.bind(this);
     this.addTurn = this.addTurn.bind(this);
-    this.state = {
+    this.initialState = {
       game: "setPlayers",
       players: [],
       cards: {
@@ -40,30 +40,12 @@ class Game extends React.Component {
       },
       turns: [],
       foundCards: {},
-    }
-    ;
+    };
+    this.state = this.initialState;
   }
 
   startNewGame() {
-    //Set state to initial value
-    this.setState({
-      game: "setPlayers",
-      players: [],
-      cards: {
-        myName: null,
-        inHand: {},
-        notInHand: {},
-        solution: [],
-        // Constants
-        categories: ["location", "suspect", "weapon"],
-        location: ['Ballroom', 'Billiard Room', 'Conservatory', 'Dining Room', 'Hall', 'Kitchen', 'Library', 'Lounge',
-          'Study'],
-        suspect: ['Green', 'Mustard', 'Peacock', 'Plum', 'Scarlett', 'White'],
-        weapon: ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'],
-      },
-      turns: [],
-      foundCards: {},
-    })
+    this.setState(this.initialState)
   }
 
   setPlayers(players) {

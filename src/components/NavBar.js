@@ -8,19 +8,21 @@ import {
   Nav,
   NavItem,
   NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
 } from 'reactstrap';
 
 class NavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isOpen: false
+      isOpen: false,
+      modal: false,
     };
     this.toggle = this.toggle.bind(this);
+    this.modalToggle = this.modalToggle.bind(this);
     this.onClick = this.onClick.bind(this);
   }
 
@@ -28,8 +30,15 @@ class NavBar extends React.Component {
     this.setState({isOpen: !this.state.isOpen})
   }
 
+  modalToggle() {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
+  }
+
   onClick() {
-    this.setState({isOpen: false})
+    this.setState({isOpen: false});
+    this.modalToggle();
     this.props.onClick()
   }
 
@@ -43,37 +52,27 @@ class NavBar extends React.Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem style={{color: "white"}} onClick={this.onClick}>
-                <NavLink className="float-right">
+                <NavLink>
                   Start new game
                 </NavLink>
               </NavItem>
             </Nav>
           </Collapse>
         </Navbar>
-        {/*<nav className="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">*/}
-        {/*    <button className="navbar-brand btn btn-primary">*/}
-        {/*      CluedoMaster*/}
-        {/*    </button>*/}
-        {/*  <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"*/}
-        {/*          aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">*/}
-        {/*    <span className="navbar-toggler-icon"></span>*/}
-        {/*  </button>*/}
-
-        {/*  <div className="collapse navbar-collapse" id="navbarColor01">*/}
-        {/*    <ul className="navbar-nav mr-auto">*/}
-        {/*      <li className="nav-item ">*/}
-        {/*        <button className="nav-link d-sm-none">Start new game</button>*/}
-        {/*      </li>*/}
-        {/*    </ul>*/}
-
-        {/*    <form className="form-inline my-2 my-lg-0 d-none d-sm-block">*/}
-        {/*      <button type="button" className="btn btn-secondary btn-fixed-width mr-4">Next turn</button>*/}
-        {/*      <button type="button" className="btn btn-success btn-fixed-width mr-4">Make accusation</button>*/}
-        {/*      <button className="btn btn-warning btn-fixed-width my-2 my-sm-0 max-4">Start new game</button>*/}
-        {/*    </form>*/}
-
-        {/*  </div>*/}
-        {/*</nav>*/}
+        <Modal isOpen={this.state.modal} toggle={this.modalToggle}>
+          <ModalHeader toggle={this.modalToggle}>Are you sure to start a new game?</ModalHeader>
+          <ModalBody>
+            All the data of the current game will be deleted.
+          </ModalBody>
+          <div className="row d-flex justify-content-between mx-2 mb-3">
+            <button type="button" className="btn btn-secondary btn-fixed-width" onClick={this.modalToggle}>
+              Cancel
+            </button>
+            <button type="button" className="btn btn-primary btn-fixed-width float-right" onClick={this.onClick}>
+              Start new game
+            </button>
+          </div>
+        </Modal>
       </Fragment>
     )
   }
