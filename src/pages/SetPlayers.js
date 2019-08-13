@@ -47,7 +47,6 @@ class SetPlayers extends React.Component {
       }
       let name = i - 1;
 
-      //TODO: pre fill value if available
       fields = fields.concat(
         <FormGroup key={i}>
           <Input name={name}

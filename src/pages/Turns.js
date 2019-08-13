@@ -18,12 +18,12 @@ function Turns(props) {
   for (const card in props.foundCards)
     if (props.foundCards[card] === "solution") {
       foundCardAlerts.push(
-        <UncontrolledAlert color="success">
+        <UncontrolledAlert key={card} color="success">
           CluedoMaster found out that {card} is in the solution.
         </UncontrolledAlert>)
     } else {
       foundCardAlerts.push(
-        <UncontrolledAlert color="success">
+        <UncontrolledAlert key={card} color="success">
           CluedoMaster found out that {props.foundCards[card]} has [card].
         </UncontrolledAlert>
       )

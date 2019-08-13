@@ -8,18 +8,18 @@ import Turns from "./pages/Turns";
 import Suggestion from "./pages/Suggestion";
 import Solution from "./pages/Solution";
 
-
-//TODO: Functions for states
-//TODO: Navigation
-//TODO: Accusation
-//TODO: eliminate card
-//TODO: update turn / delete turn
+//TODO: Navigation desktop & mobile
+//TODO: Remove Accusation
+//TODO: Eliminate card
+//TODO: Update turn / delete turn
+//TODO: Add more details to CardItem
 
 
 class Game extends React.Component {
 
   constructor(props) {
     super(props);
+    this.startNewGame = this.startNewGame.bind(this);
     this.setPlayers = this.setPlayers.bind(this);
     this.selectCards = this.selectCards.bind(this);
     this.addTurn = this.addTurn.bind(this);
@@ -42,6 +42,28 @@ class Game extends React.Component {
       foundCards: {},
     }
     ;
+  }
+
+  startNewGame() {
+    //Set state to initial value
+    this.setState({
+      game: "setPlayers",
+      players: [],
+      cards: {
+        myName: null,
+        inHand: {},
+        notInHand: {},
+        solution: [],
+        // Constants
+        categories: ["location", "suspect", "weapon"],
+        location: ['Ballroom', 'Billiard Room', 'Conservatory', 'Dining Room', 'Hall', 'Kitchen', 'Library', 'Lounge',
+          'Study'],
+        suspect: ['Green', 'Mustard', 'Peacock', 'Plum', 'Scarlett', 'White'],
+        weapon: ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'],
+      },
+      turns: [],
+      foundCards: {},
+    })
   }
 
   setPlayers(players) {
@@ -242,7 +264,7 @@ class Game extends React.Component {
   render() {
     return (
       <Fragment>
-        <NavBar/>
+        <NavBar onClick={this.startNewGame}/>
         {this.state.game === "setPlayers" &&
         <SetPlayers onSubmit={(players) => this.setPlayers(players)}/>}
         {this.state.game === "selectCards" &&

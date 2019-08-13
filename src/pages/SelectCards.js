@@ -61,7 +61,7 @@ class SelectCards extends React.Component {
         </div>
 
         <div className="row d-flex justify-content-between mx-2 mb-3">
-          <button className="btn btn-secondary btn-fixed-width">Back to players</button>
+          <button className="btn btn-secondary btn-fixed-width" onClick={this.props.onBack}>Back to players</button>
           <button className="btn btn-primary btn-fixed-width" onClick={this.onClick}>Start game</button>
         </div>
       </div>

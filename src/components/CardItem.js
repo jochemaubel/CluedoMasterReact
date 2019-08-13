@@ -5,8 +5,6 @@ import CardIcon from "./CardIcon";
 
 function CardItem(props) {
 
-  //TODO: add extra info to cardItem (hasSeen, showedTo)
-
   let className = "d-flex flex-row list-group-item list-group-item-action justify-content-end align-items-center";
   if (props.selected) {className = className + " active"}
 
