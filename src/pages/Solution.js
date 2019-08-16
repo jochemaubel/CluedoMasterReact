@@ -13,7 +13,6 @@ function Solution(props) {
       }
     }
   }
-  console.log(solutionDict);
   const solutionList = categories.map((category) => <CardItem key={category}
                                                               card={solutionDict[category]}
                                                               cards={props.cards}

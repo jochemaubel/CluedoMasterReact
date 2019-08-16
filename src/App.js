@@ -7,6 +7,7 @@ import Cards from './pages/Cards';
 import Turns from "./pages/Turns";
 import Suggestion from "./pages/Suggestion";
 import Solution from "./pages/Solution";
+import updateCards from "./services/UpdateCardService";
 
 //TODO: Eliminate card
 //TODO: Update turn / delete turn
@@ -104,15 +105,20 @@ class Game extends React.Component {
     this.setState({
       turns: turns,
     });
-    const foundSolution = this.updateCards(turn);
-    if (foundSolution) {
+    const gameUpdate = updateCards(turns, this.state.cards, this.state.players);
+    const cards = gameUpdate.cards;
+    const foundCards = gameUpdate.foundCards;
+    this.setState({
+      cards: cards,
+      foundCards: foundCards,
+    });
+    if (cards.solution.length === 3) {
       this.setState({game: "solution"})
     } else {
       this.setState({game: "turns"})
     }
     let cardHistory = this.state.cardHistory.slice();
-    const currentStateCards = JSON.parse(JSON.stringify(this.state.cards));
-    cardHistory = cardHistory.concat(currentStateCards);
+    cardHistory = cardHistory.concat(cards);
     this.setState({
       cardHistory: cardHistory,
     });
@@ -132,162 +138,6 @@ class Game extends React.Component {
       turns: turns,
       cardHistory: cardHistory
     })
-  }
-
-  updateCards(turn) {
-    const turns = this.state.turns;
-    const cards = this.state.cards;
-    this.setState({foundCards: {}});
-
-    // Add showed card to cards_in_hand
-    if (turn.cardShowed) {
-      cards.inHand[turn.cardShowed] = turn.showPlayer
-    }
-
-    // Add players that didn't show a card to cards_not_in_hand
-    console.log("Add players that didn't show a card to cards_not_in_hand");
-    let player = this.nextPlayer(turn.turnPlayer);
-    while (turn.showPlayer !== player && turn.turnPlayer !== player) {
-      const addCards = cards.categories.map((category) => turn.cards[category]);
-      this.updateCardsNotInHand(addCards, player);
-      player = this.nextPlayer(player)
-    }
-
-    // Check every turn for cards we can know
-    console.log("Check every turn for cards we can know");
-    this.checkAllTurns(turns);
-
-    // Update cardsNotInHand for solution & cardsInHand
-    console.log("Update cardsNotInHand for solution & cardsInHand");
-    this.fillCardsNotInHand();
-
-    // Check if solution has been found
-    return this.state.cards.solution.length === 3;
-
-  }
-
-  nextPlayer(player) {
-    const players = this.state.players;
-    let i = players.indexOf(player) + 1;
-    if (i === players.length) {
-      i = 0
-    }
-    return players[i]
-  }
-
-  updateCardsInHand(addCards, player) {
-    const cards = this.state.cards;
-    const foundCards = this.state.foundCards;
-    for (const card of addCards) {
-      if (!(card in cards.inHand)) {
-        cards.inHand[card] = player;
-        foundCards[card] = player
-      }
-    }
-    this.setState({cards: cards, foundCards: foundCards})
-  }
-
-  updateCardsNotInHand(addCards, player) {
-    let cards = this.state.cards;
-    for (const card of addCards) {
-      if (!(card in cards.notInHand)) {
-        cards.notInHand[card] = player
-      } else {
-        if (!cards.notInHand[card].includes(player)) {
-          cards.notInHand[card] = cards.notInHand[card].concat(player)
-        }
-      }
-      if (cards.notInHand[card].length === this.state.players.length && !(card in cards.inHand)) {
-        this.updateSolution(card);
-      }
-    }
-    this.setState({cards: cards})
-  }
-
-  updateSolution(card) {
-    let cards = this.state.cards;
-    let foundCards = this.state.foundCards;
-    if (!cards.solution.includes(card)) {
-      cards.solution = cards.solution.concat(card);
-      foundCards[card] = "solution";
-      this.setState({cards: cards, foundCards: foundCards})
-    }
-  }
-
-  checkAllTurns(turns) {
-    let addedCard = true;
-    while (addedCard) {
-      addedCard = false;
-      for (const turn in turns) {
-        if (turn.showPlayer) {
-          const player = turn.showPlayer;
-          const turnCards = turn.cards;
-          const card = this.checkHasOneCard(turnCards, player);
-          if (card) {
-            this.updateCardsInHand([card], player);
-            addedCard = true
-          }
-        }
-      }
-      this.checkSolutionCards();
-    }
-  }
-
-  checkHasOneCard(turnCards, player) {
-    const cardsNotInHand = this.state.cards.notInHand;
-    let numberOfCardsNotInHand = 0;
-    let canHaveCard = null;
-    for (const category of turnCards) {
-      const card = turnCards[category];
-      if (card in cardsNotInHand) {
-        if (cardsNotInHand.includes(player)) {
-          numberOfCardsNotInHand++
-        } else {
-          canHaveCard = card
-        }
-      }
-    }
-    if (numberOfCardsNotInHand === 2) {
-      return canHaveCard
-    }
-    return null
-  }
-
-  checkSolutionCards() {
-    const categories = ["location", "suspect", "weapon"];
-    let cards = this.state.cards;
-    for (const category of categories) {
-      const catCards = cards[category];
-      let numberOfCardsInHand = 0;
-      let solution;
-      for (const card of catCards) {
-        if (card in cards.inHand) {
-          numberOfCardsInHand++
-        } else {
-          solution = card
-        }
-      }
-      if (numberOfCardsInHand === catCards.length - 1) {
-        this.updateSolution(solution)
-      }
-    }
-  }
-
-  fillCardsNotInHand() {
-    let cards = this.state.cards;
-    const players = this.state.players;
-    for (const card in cards.inHand) {
-      for (const player of players) {
-        if (player !== cards.inHand[card]) {
-          this.updateCardsNotInHand([card], player)
-        }
-      }
-    }
-    for (const card of cards.solution) {
-      for (const player of players) {
-        this.updateCardsNotInHand([card], player)
-      }
-    }
   }
 
   render() {

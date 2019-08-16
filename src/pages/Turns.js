@@ -51,7 +51,7 @@ class Turns extends React.Component {
       } else {
         foundCardAlerts.push(
           <UncontrolledAlert key={card} color="success">
-            CluedoMaster found out that {this.props.foundCards[card]} has [card].
+            CluedoMaster found out that {this.props.foundCards[card]} has {card}.
           </UncontrolledAlert>
         )
       }
