@@ -8,8 +8,6 @@ import Turns from "./pages/Turns";
 import Suggestion from "./pages/Suggestion";
 import Solution from "./pages/Solution";
 
-//TODO: Navigation desktop & mobile
-//TODO: Remove Accusation
 //TODO: Eliminate card
 //TODO: Update turn / delete turn
 //TODO: Add more details to CardItem
@@ -23,7 +21,8 @@ class Game extends React.Component {
     this.setPlayers = this.setPlayers.bind(this);
     this.selectCards = this.selectCards.bind(this);
     this.addTurn = this.addTurn.bind(this);
-    this.initialState = {
+    this.undoTurn = this.undoTurn.bind(this);
+    this.state = {
       game: "setPlayers",
       players: [],
       cards: {
@@ -40,12 +39,31 @@ class Game extends React.Component {
       },
       turns: [],
       foundCards: {},
+      cardHistory: [],
     };
-    this.state = this.initialState;
   }
 
   startNewGame() {
-    this.setState(this.initialState)
+    this.setState(
+      {
+        game: "setPlayers",
+        players: [],
+        cards: {
+          myName: null,
+          inHand: {},
+          notInHand: {},
+          solution: [],
+          // Constants
+          categories: ["location", "suspect", "weapon"],
+          location: ['Ballroom', 'Billiard Room', 'Conservatory', 'Dining Room', 'Hall', 'Kitchen', 'Library', 'Lounge',
+            'Study'],
+          suspect: ['Green', 'Mustard', 'Peacock', 'Plum', 'Scarlett', 'White'],
+          weapon: ['Candlestick', 'Knife', 'Lead Pipe', 'Revolver', 'Rope', 'Wrench'],
+        },
+        turns: [],
+        foundCards: {},
+      }
+    )
   }
 
   setPlayers(players) {
@@ -55,36 +73,65 @@ class Game extends React.Component {
   }
 
   selectCards(cardsInHand) {
-    let cards= this.state.cards;
+    let cards = {...this.state.cards};
+    const players = this.state.players.slice(1, this.state.players.length);
     for (const card of cardsInHand) {
       cards.inHand[card] = cards.myName;
+      cards.notInHand[card] = players;
     }
-    for(const category of cards.categories) {
-      for(const card of cards[category]) {
-        if(!(card in cards.inHand)) {
+    for (const category of cards.categories) {
+      for (const card of cards[category]) {
+        if (!(card in cards.inHand)) {
           cards.notInHand[card] = [cards.myName]
         }
       }
     }
+    const cardHistory = [JSON.parse(JSON.stringify(cards))];
     console.log(cards.inHand);
     console.log(cards.notInHand);
-    this.setState({cards:cards, game: "turns"})
+    console.log(cardHistory);
+    this.setState({
+      cards: cards,
+      cardHistory: cardHistory,
+      game: "turns"
+    })
   }
 
   addTurn(turn) {
-    let turns = this.state.turns;
+    let turns = this.state.turns.slice();
     turn.turnNumber = turns.length + 1;
     turns = turns.concat(turn);
     this.setState({
       turns: turns,
     });
     const foundSolution = this.updateCards(turn);
-    console.log(foundSolution);
     if (foundSolution) {
       this.setState({game: "solution"})
     } else {
       this.setState({game: "turns"})
     }
+    let cardHistory = this.state.cardHistory.slice();
+    const currentStateCards = JSON.parse(JSON.stringify(this.state.cards));
+    cardHistory = cardHistory.concat(currentStateCards);
+    this.setState({
+      cardHistory: cardHistory,
+    });
+  }
+
+  undoTurn() {
+    let turns = this.state.turns.slice();
+    if (turns.length === 0) {
+      return console.log("There are no turns to undo.")
+    }
+    turns.pop();
+    let cardHistory = this.state.cardHistory.slice();
+    cardHistory.pop();
+    let cards = JSON.parse(JSON.stringify(cardHistory[cardHistory.length - 1]));
+    this.setState({
+      cards: cards,
+      turns: turns,
+      cardHistory: cardHistory
+    })
   }
 
   updateCards(turn) {
@@ -107,11 +154,11 @@ class Game extends React.Component {
     }
 
     // Check every turn for cards we can know
-    console.log("Check every turn for cards we can know")
+    console.log("Check every turn for cards we can know");
     this.checkAllTurns(turns);
 
     // Update cardsNotInHand for solution & cardsInHand
-    console.log("Update cardsNotInHand for solution & cardsInHand")
+    console.log("Update cardsNotInHand for solution & cardsInHand");
     this.fillCardsNotInHand();
 
     // Check if solution has been found
@@ -230,14 +277,14 @@ class Game extends React.Component {
     let cards = this.state.cards;
     const players = this.state.players;
     for (const card in cards.inHand) {
-      for (const player in players) {
+      for (const player of players) {
         if (player !== cards.inHand[card]) {
           this.updateCardsNotInHand([card], player)
         }
       }
     }
     for (const card of cards.solution) {
-      for (const player in players) {
+      for (const player of players) {
         this.updateCardsNotInHand([card], player)
       }
     }
@@ -259,7 +306,9 @@ class Game extends React.Component {
         <Turns cards={this.state.cards}
                turns={this.state.turns}
                foundCards={this.state.foundCards}
-               newTurn={() => this.setState({game: "suggestion"})}/>}
+               newTurn={() => this.setState({game: "suggestion"})}
+               undoTurn={this.undoTurn}
+        />}
         {this.state.game === "suggestion" &&
         <Suggestion cards={this.state.cards}
                     players={this.state.players}

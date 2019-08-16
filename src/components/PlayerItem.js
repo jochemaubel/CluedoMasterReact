@@ -20,7 +20,7 @@ function PlayerItem(props) {
         const card = turnCards[category];
         if (card in props.cards.inHand
           && props.cards.inHand[card] === player) {
-          badge = badge.concat(<Badge badgeText={card} color="badge-primary"/>)
+          badge = badge.concat(<Badge key={card} badgeText={card} color="badge-primary"/>)
         } else if (card in props.cards.notInHand
           && props.cards.notInHand[card].includes(player)) {
           badge = badge.concat(<Badge key={card} badgeText={card} color="badge-danger"/>);

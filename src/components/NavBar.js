@@ -8,11 +8,8 @@ import {
   Nav,
   NavItem,
   NavLink,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
 } from 'reactstrap';
+import confirm from 'reactstrap-confirm';
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -31,15 +28,23 @@ class NavBar extends React.Component {
   }
 
   modalToggle() {
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
+    this.setState({
+        modal: !this.state.modal,
+        isOpen: false
+      }
+    );
   }
 
-  onClick() {
-    this.setState({isOpen: false});
-    this.modalToggle();
-    this.props.onClick()
+  async onClick() {
+    let confirmation = await confirm({
+      title: "Are you sure?",
+      message: "If you start a new game, all the data of the current game will be lost.",
+      confirmText: "Start new game",
+    });
+    if (confirmation) {
+      this.props.onClick()
+    }
+    this.toggle();
   }
 
   render() {
@@ -59,20 +64,20 @@ class NavBar extends React.Component {
             </Nav>
           </Collapse>
         </Navbar>
-        <Modal isOpen={this.state.modal} toggle={this.modalToggle}>
-          <ModalHeader toggle={this.modalToggle}>Are you sure to start a new game?</ModalHeader>
-          <ModalBody>
-            All the data of the current game will be deleted.
-          </ModalBody>
-          <div className="row d-flex justify-content-between mx-2 mb-3">
-            <button type="button" className="btn btn-secondary btn-fixed-width" onClick={this.modalToggle}>
-              Cancel
-            </button>
-            <button type="button" className="btn btn-primary btn-fixed-width float-right" onClick={this.onClick}>
-              Start new game
-            </button>
-          </div>
-        </Modal>
+        {/*<Modal isOpen={this.state.modal} toggle={this.modalToggle}>*/}
+        {/*  <ModalHeader toggle={this.modalToggle}>Are you sure to start a new game?</ModalHeader>*/}
+        {/*  <ModalBody>*/}
+        {/*    All the data of the current game will be deleted.*/}
+        {/*  </ModalBody>*/}
+        {/*  <div className="row d-flex justify-content-between mx-2 mb-3">*/}
+        {/*    <button type="button" className="btn btn-secondary btn-fixed-width" onClick={this.modalToggle}>*/}
+        {/*      Cancel*/}
+        {/*    </button>*/}
+        {/*    <button type="button" className="btn btn-primary btn-fixed-width float-right" onClick={this.onClick}>*/}
+        {/*      Start new game*/}
+        {/*    </button>*/}
+        {/*  </div>*/}
+        {/*</Modal>*/}
       </Fragment>
     )
   }
