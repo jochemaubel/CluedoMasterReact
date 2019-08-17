@@ -20,8 +20,6 @@ function Turn(props) {
       </div>
     );
 
-  //TODO: check styling card on mobile
-
   return (
     <div className="card my-3">
       <div className="card-header d-sm-flex flex-row justify-content-end align-items-center">
