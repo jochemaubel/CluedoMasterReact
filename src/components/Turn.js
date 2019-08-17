@@ -24,12 +24,12 @@ function Turn(props) {
 
   return (
     <div className="card my-3">
-      <div className="card-header d-flex flex-row justify-content-end align-items-center">
-        <span className="mr-auto h4">{turn.turnNumber}. {turn.turnPlayer}</span>
-        <span className="mx-1">
+      <div className="card-header d-sm-flex flex-row justify-content-end align-items-center">
+        <div className="mr-auto h4">{turn.turnNumber}. {turn.turnPlayer}</div>
+        <div>
           <img src={require("../images/showed_card.png")} alt="" className="resize mr-2"/>
           {turn.showPlayer} showed {cardShowed}.
-          </span>
+          </div>
       </div>
       <div className="card-body row">
         {turnCards}
