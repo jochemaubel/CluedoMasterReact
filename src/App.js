@@ -9,10 +9,10 @@ import Suggestion from "./pages/Suggestion";
 import Solution from "./pages/Solution";
 import updateCards from "./services/UpdateCardService";
 
+//TODO: Make app available offline
 //TODO: Eliminate card
-//TODO: Update turn / delete turn
+//TODO: If a player must show a card, don't show the other options
 //TODO: Add more details to CardItem
-
 
 class Game extends React.Component {
 

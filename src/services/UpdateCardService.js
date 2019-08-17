@@ -1,5 +1,4 @@
 export default function updateCards(turns, cards, players) {
-  console.log(turns);
   const turn = turns[turns.length - 1];
   const numberOfPlayers = players.length;
   let updatedCards = JSON.parse(JSON.stringify(cards));
@@ -34,14 +33,12 @@ export default function updateCards(turns, cards, players) {
 
   // Update cardsNotInHand for solution & cardsInHand
   console.log("Update cardsNotInHand for solution & cardsInHand");
-  console.log(updatedCards);
   gameUpdate = fillCardsNotInHand(updatedCards, players);
   updatedCards = gameUpdate.updatedCards;
   for (const key in gameUpdate.foundCards) {
     foundCards[key] = gameUpdate.foundCards[key]
   }
 
-  console.log(foundCards);
   return {
     cards: updatedCards,
     foundCards: foundCards
@@ -72,7 +69,6 @@ function updateCardsInHand(addCards, player, cards) {
 function updateCardsNotInHand(addCards, player, cards, numberOfPlayers) {
   let updatedCards = JSON.parse(JSON.stringify(cards));
   let foundCards = {};
-  console.log(updatedCards);
   for (const card of addCards) {
     if (!(card in updatedCards.notInHand)) {
       updatedCards.notInHand[card] = player
@@ -82,7 +78,6 @@ function updateCardsNotInHand(addCards, player, cards, numberOfPlayers) {
       }
     }
     if (updatedCards.notInHand[card].length === numberOfPlayers && !(card in updatedCards.inHand)) {
-      console.log(updatedCards);
       const gameUpdate = updateSolution(card, updatedCards.solution);
       updatedCards.solution = gameUpdate.solution;
       for (const key in gameUpdate.foundCards) {
@@ -97,12 +92,9 @@ function updateCardsNotInHand(addCards, player, cards, numberOfPlayers) {
 }
 
 function updateSolution(card, solution) {
-  console.log(solution);
-  console.log(card);
   let updatedSolution = JSON.parse(JSON.stringify(solution));
   let foundCards = {};
   if (!solution.includes(card)) {
-    console.log(updatedSolution);
     updatedSolution = updatedSolution.concat(card);
     foundCards[card] = "solution";
   }
@@ -113,27 +105,19 @@ function updateSolution(card, solution) {
 }
 
 function checkAllTurns(turns, cards) {
-  console.log(turns);
   let updatedCards = JSON.parse(JSON.stringify(cards));
   let foundCards = {};
   let addedCard = true;
   let stopLooping = 0;
   while (addedCard || stopLooping > 20) {
-    stopLooping++;
-    console.log(stopLooping);
-    console.log(addedCard);
     addedCard = false;
     for (const turn of turns) {
       if (turn.showPlayer !== "Nobody") {
         const player = turn.showPlayer;
         const turnCards = turn.cards;
-        console.log(turnCards);
-        console.log(player);
         const card = checkHasOneCard(turnCards, player, updatedCards.notInHand);
-        console.log(card);
         if (card) {
           let gameUpdate = updateCardsInHand([card], player, updatedCards);
-          console.log(gameUpdate);
           updatedCards = gameUpdate.cards;
           for (const key in gameUpdate.foundCards) {
             foundCards[key] = gameUpdate.foundCards[key];
@@ -142,7 +126,6 @@ function checkAllTurns(turns, cards) {
         }
       }
     }
-    console.log(updatedCards);
     let gameUpdate = checkSolutionCards(updatedCards);
     updatedCards = gameUpdate.updatedCards;
     for (const key in gameUpdate.foundCards) {
@@ -194,10 +177,8 @@ function checkSolutionCards(cards) {
       for (const key in gameUpdate.foundCards) {
         foundCards[key] = gameUpdate.foundCards[key]
       }
-      console.log(gameUpdate);
     }
   }
-  console.log(updatedCards);
 
   return {
     updatedCards: updatedCards,
@@ -208,7 +189,6 @@ function checkSolutionCards(cards) {
 function fillCardsNotInHand(cards, players) {
   let updatedCards = JSON.parse(JSON.stringify(cards));
   let foundCards = {};
-  console.log(updatedCards);
   for (const card in cards.inHand) {
     for (const player of players) {
       if (player !== cards.inHand[card]) {
