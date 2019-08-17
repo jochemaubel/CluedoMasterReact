@@ -57,13 +57,17 @@ class Suggestion extends React.Component {
         suggestAlert: false,
       });
       const showPlayers = setShowPlayers(turn.turnPlayer, this.props.players, turn.cards, this.props.cards);
+      const turnCardsArray = cardDictToArray(turn.cards);
       for (const player of showPlayers) {
-        if(playerHasOneOfTheseCards(cardDictToArray(turn.cards),player,this.props.cards.inHand)) {
-          turn["showPlayer"] = player;
-          this.setState({turn: turn});
+        if (!playerHasNoneOfTheseCards(turnCardsArray, player, this.props.cards.notInHand)) {
+          if (playerHasOneOfTheseCards(turnCardsArray, player, this.props.cards.inHand)) {
+            turn["showPlayer"] = player;
+            this.setState({turn: turn})
+          }
           break
         }
       }
+
     } else {
       this.setState({suggestAlert: true});
     }

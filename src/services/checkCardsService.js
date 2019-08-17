@@ -19,7 +19,6 @@ export function playerHasNoneOfTheseCards(checkCards, player, cardsNotInHand) {
 export function cardDictToArray(cardDict) {
   let cardArray=[];
   for(const category in cardDict) {
-    console.log(category);
     cardArray.push(cardDict[category])
   }
   return cardArray

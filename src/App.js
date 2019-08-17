@@ -10,7 +10,6 @@ import Solution from "./pages/Solution";
 import updateCards from "./services/UpdateCardService";
 
 //TODO: Eliminate card
-//TODO: If a player must show a card, don't show the other options
 //TODO: Add more details to CardItem
 
 class Game extends React.Component {
