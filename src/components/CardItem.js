@@ -29,11 +29,11 @@ function CardItem(props) {
   }
 
   return (
-    <li className={className} onClick={props.onClick}>
-      <CardIcon cardType={props.image}/>
-      <span className="mr-auto">{card}</span>
-      {badge}
-    </li>
+      <li className={className} onClick={props.onClick}>
+        <CardIcon cardType={props.image}/>
+        <span className="mr-auto">{card}</span>
+        {badge}
+      </li>
   );
 }
 

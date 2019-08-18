@@ -8,7 +8,7 @@ import {
   playerHasOneOfTheseCards,
   playerHasNoneOfTheseCards,
   cardDictToArray
-} from "../services/checkCardsService"
+} from "../services/CheckCardsService"
 
 function setShowPlayers(turnPlayer, players, turnCards, cards) {
   const index = players.indexOf(turnPlayer);
@@ -102,8 +102,6 @@ class Suggestion extends React.Component {
   }
 
   onClick(value, key) {
-    console.log(value);
-    console.log(key);
     let turn = JSON.parse(JSON.stringify(this.state.turn));
     if (["location", "suspect", "weapon"].includes(key)) {
       turn.cards[key] = value;

@@ -26,7 +26,6 @@ class SetPlayers extends React.Component {
     this.setState({
       players: players
     });
-    console.log(players);
   };
 
   onClick() {

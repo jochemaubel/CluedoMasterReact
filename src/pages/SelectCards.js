@@ -21,7 +21,7 @@ class SelectCards extends React.Component {
     } else {
       inHand.push(card)
     }
-    console.log(inHand);
+
     this.setState({inHand: inHand});
   }
 

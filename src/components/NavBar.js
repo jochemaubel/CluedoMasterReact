@@ -16,35 +16,32 @@ class NavBar extends React.Component {
     super(props);
     this.state = {
       isOpen: false,
-      modal: false,
     };
     this.toggle = this.toggle.bind(this);
-    this.modalToggle = this.modalToggle.bind(this);
-    this.onClick = this.onClick.bind(this);
+    this.onStartNewGame = this.onStartNewGame.bind(this);
+    this.onEliminateCard = this.onEliminateCard.bind(this);
   }
 
   toggle() {
     this.setState({isOpen: !this.state.isOpen})
   }
 
-  modalToggle() {
-    this.setState({
-        modal: !this.state.modal,
-        isOpen: false
-      }
-    );
-  }
 
-  async onClick() {
+  async onStartNewGame() {
     let confirmation = await confirm({
       title: "Are you sure?",
       message: "If you start a new game, all the data of the current game will be lost.",
       confirmText: "Start new game",
     });
     if (confirmation) {
-      this.props.onClick()
+      this.props.onStartNewGame()
     }
     this.toggle();
+  }
+
+  onEliminateCard() {
+    this.props.onEliminateCard();
+    this.toggle()
   }
 
   render() {
@@ -56,28 +53,19 @@ class NavBar extends React.Component {
           <NavbarToggler onClick={this.toggle} className="mr-2"/>
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              <NavItem style={{color: "white"}} onClick={this.onClick}>
+              <NavItem style={{color: "white"}} onClick={this.onStartNewGame}>
                 <NavLink>
                   Start new game
+                </NavLink>
+              </NavItem>
+              <NavItem style={{color: "white"}} onClick={this.onEliminateCard}>
+                <NavLink>
+                  Eliminate card
                 </NavLink>
               </NavItem>
             </Nav>
           </Collapse>
         </Navbar>
-        {/*<Modal isOpen={this.state.modal} toggle={this.modalToggle}>*/}
-        {/*  <ModalHeader toggle={this.modalToggle}>Are you sure to start a new game?</ModalHeader>*/}
-        {/*  <ModalBody>*/}
-        {/*    All the data of the current game will be deleted.*/}
-        {/*  </ModalBody>*/}
-        {/*  <div className="row d-flex justify-content-between mx-2 mb-3">*/}
-        {/*    <button type="button" className="btn btn-secondary btn-fixed-width" onClick={this.modalToggle}>*/}
-        {/*      Cancel*/}
-        {/*    </button>*/}
-        {/*    <button type="button" className="btn btn-primary btn-fixed-width float-right" onClick={this.onClick}>*/}
-        {/*      Start new game*/}
-        {/*    </button>*/}
-        {/*  </div>*/}
-        {/*</Modal>*/}
       </Fragment>
     )
   }

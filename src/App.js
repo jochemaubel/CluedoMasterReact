@@ -8,6 +8,7 @@ import Turns from "./pages/Turns";
 import Suggestion from "./pages/Suggestion";
 import Solution from "./pages/Solution";
 import updateCards from "./services/UpdateCardService";
+import EliminateCard from "./pages/EliminateCard";
 
 //TODO: Eliminate card
 //TODO: Add more details to CardItem
@@ -21,6 +22,7 @@ class Game extends React.Component {
     this.selectCards = this.selectCards.bind(this);
     this.addTurn = this.addTurn.bind(this);
     this.undoTurn = this.undoTurn.bind(this);
+    this.eliminateCard = this.eliminateCard.bind(this);
     this.state = {
       game: "setPlayers",
       players: [],
@@ -86,9 +88,6 @@ class Game extends React.Component {
       }
     }
     const cardHistory = [JSON.parse(JSON.stringify(cards))];
-    console.log(cards.inHand);
-    console.log(cards.notInHand);
-    console.log(cardHistory);
     this.setState({
       cards: cards,
       cardHistory: cardHistory,
@@ -103,20 +102,24 @@ class Game extends React.Component {
     this.setState({
       turns: turns,
     });
-    const gameUpdate = updateCards(turns, this.state.cards, this.state.players);
-    const cards = gameUpdate.cards;
+    this.updateGame(turns, this.state.cards, this.state.players)
+  }
+
+  updateGame(turns, cards, players) {
+    const gameUpdate = updateCards(turns, cards, players);
+    const cards_ = gameUpdate.cards;
     const foundCards = gameUpdate.foundCards;
     this.setState({
-      cards: cards,
+      cards: cards_,
       foundCards: foundCards,
     });
-    if (cards.solution.length === 3) {
+    if (cards_.solution.length === 3) {
       this.setState({game: "solution"})
     } else {
       this.setState({game: "turns"})
     }
     let cardHistory = this.state.cardHistory.slice();
-    cardHistory = cardHistory.concat(cards);
+    cardHistory = cardHistory.concat(cards_);
     this.setState({
       cardHistory: cardHistory,
     });
@@ -138,10 +141,22 @@ class Game extends React.Component {
     })
   }
 
+  eliminateCard(card, player) {
+    let cards = {...this.state.cards};
+    cards.inHand[card] = player;
+    this.setState({cards: cards});
+    const turns = this.state.turns;
+    if (turns.length > 0) {
+      this.updateGame(this.state.turns, cards, this.state.players);
+    }
+    this.setState({game: "turns"})
+  }
+
   render() {
     return (
       <Fragment>
-        <NavBar onClick={this.startNewGame}/>
+        <NavBar onStartNewGame={this.startNewGame}
+                onEliminateCard={() => this.setState({game: "eliminateCard"})}/>
         {this.state.game === "setPlayers" &&
         <SetPlayers onSubmit={(players) => this.setPlayers(players)}/>}
         {this.state.game === "selectCards" &&
@@ -164,6 +179,12 @@ class Game extends React.Component {
                     onSubmit={(turn) => this.addTurn(turn)}/>}
         {this.state.game === "solution" &&
         <Solution cards={this.state.cards}/>}
+        {this.state.game === "eliminateCard" &&
+        <EliminateCard cards={this.state.cards}
+                       players={this.state.players}
+                       toTurns={() => this.setState({game: "turns"})}
+                       onEliminate={(card, player) => this.eliminateCard(card, player)}
+        />}
       </Fragment>
     );
   }
