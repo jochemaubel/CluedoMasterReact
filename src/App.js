@@ -10,9 +10,6 @@ import Solution from "./pages/Solution";
 import updateCards from "./services/UpdateCardService";
 import EliminateCard from "./pages/EliminateCard";
 
-//TODO: Eliminate card
-//TODO: Add more details to CardItem
-
 class Game extends React.Component {
 
   constructor(props) {
